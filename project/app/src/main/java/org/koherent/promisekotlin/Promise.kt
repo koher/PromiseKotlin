@@ -42,11 +42,11 @@ public class Promise<T> {
     }
 
     public fun map<U>(f: (T) -> U): Promise<U> {
-        return flatMap { Promise<U>(f(it)) }
+        return flatMap { Promise(f(it)) }
     }
 
     public fun flatMap<U>(f: (T) -> Promise<U>): Promise<U> {
-        return Promise<U> { resolve -> reserve { resolve(f(it)) } }
+        return Promise { resolve -> reserve { resolve(f(it)) } }
     }
 
     public fun apply<U>(f: Promise<(T) -> U>): Promise<U> {
@@ -70,6 +70,6 @@ public fun <T : Any, U : Any> Promise<T?>.flatMap2(f: (T?) -> Promise<U?>?): Pro
     return flatMap { f(it) ?: Promise<U?>(null) }
 }
 
-public fun <T ,U> Promise<(T) -> U>.apply2(x: Promise<T>): Promise<U> {
+public fun <T, U> Promise<(T) -> U>.apply2(x: Promise<T>): Promise<U> {
     return x.apply(this)
 }

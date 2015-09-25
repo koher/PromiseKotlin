@@ -1,10 +1,9 @@
 package org.koherent.promisekotlin
 
 import junit.framework.TestCase
-import java.util.*
+import java.util.Timer
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
-import kotlin.concurrent.timer
 import kotlin.concurrent.timerTask
 import kotlin.test.assertEquals
 import kotlin.test.fail
