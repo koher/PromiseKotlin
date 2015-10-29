@@ -4,9 +4,8 @@ import junit.framework.TestCase
 import java.util.Timer
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
+import kotlin.concurrent.thread
 import kotlin.concurrent.timerTask
-import kotlin.test.assertEquals
-import kotlin.test.fail
 
 public class PromiseTest : TestCase() {
     public fun testMap() {
@@ -23,7 +22,7 @@ public class PromiseTest : TestCase() {
 
             signal.await(3L, TimeUnit.SECONDS)
         } catch(e: Exception) {
-            fail(e.getMessage())
+            fail(e.message)
         }
     }
 
@@ -40,7 +39,7 @@ public class PromiseTest : TestCase() {
 
                 signal.await(3L, TimeUnit.SECONDS)
             } catch(e: Exception) {
-                fail(e.getMessage())
+                fail(e.message)
             }
         }
 
@@ -59,7 +58,7 @@ public class PromiseTest : TestCase() {
 
                 signal.await(3L, TimeUnit.SECONDS)
             } catch(e: Exception) {
-                fail(e.getMessage())
+                fail(e.message)
             }
         }
     }
@@ -86,7 +85,7 @@ public class PromiseTest : TestCase() {
 
                 signal.await(3L, TimeUnit.SECONDS)
             } catch(e: Exception) {
-                fail(e.getMessage())
+                fail(e.message)
             }
         }
 
@@ -107,7 +106,7 @@ public class PromiseTest : TestCase() {
 
                 signal.await(3L, TimeUnit.SECONDS)
             } catch(e: Exception) {
-                fail(e.getMessage())
+                fail(e.message)
             }
         }
 
@@ -128,7 +127,7 @@ public class PromiseTest : TestCase() {
 
                 signal.await(3L, TimeUnit.SECONDS)
             } catch(e: Exception) {
-                fail(e.getMessage())
+                fail(e.message)
             }
         }
     }
@@ -147,11 +146,11 @@ public class PromiseTest : TestCase() {
 
             signal.await(3L, TimeUnit.SECONDS)
         } catch(e: Exception) {
-            fail(e.getMessage())
+            fail(e.message)
         }
     }
 
-    public fun testSample() {
+   public fun testSample() {
         // `flatMap` is equivalent to `then` of JavaScript's `Promise`
         val a: Promise<Int> = asyncGet(2).flatMap { asyncGet(it) }.flatMap { asyncGet(it) }
         val b: Promise<Int> = asyncGet(3).map { it * it }
@@ -179,7 +178,7 @@ fun asyncGetOrFail(value: Int, fails: Boolean): Promise<Int?> {
     return if (fails) {
         Promise<Int?>(null)
     } else {
-        asyncGet(value).map {(x: Int): Int? -> x }
+        asyncGet(value).map { it as Int? }
     }
 }
 
