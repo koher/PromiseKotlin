@@ -1,7 +1,7 @@
 package org.koherent.promisekotlin
 
 import junit.framework.TestCase
-import java.util.Timer
+import java.util.*
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 import kotlin.concurrent.thread
@@ -150,7 +150,34 @@ public class PromiseTest : TestCase() {
         }
     }
 
-   public fun testSample() {
+    public fun testSynchronization() {
+        for (i in 1..100) {
+            // cause simultaneous `resolve` and `reserve`
+            val signal = CountDownLatch(1)
+            val sync = CountDownLatch(1)
+
+            val promise = Promise<Int> { resolve ->
+                thread {
+                    sync.await()
+                    resolve(pure(2))
+                }
+            }
+
+            thread {
+                sync.countDown()
+                promise.flatMap {
+                    signal.countDown()
+                    pure(it * it)
+                }
+            }
+
+            if (!signal.await(3L, TimeUnit.SECONDS)) {
+                fail()
+            }
+        }
+    }
+
+    public fun testSample() {
         // `flatMap` is equivalent to `then` of JavaScript's `Promise`
         val a: Promise<Int> = asyncGet(2).flatMap { asyncGet(it) }.flatMap { asyncGet(it) }
         val b: Promise<Int> = asyncGet(3).map { it * it }

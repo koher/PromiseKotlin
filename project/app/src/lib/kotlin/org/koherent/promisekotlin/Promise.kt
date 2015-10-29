@@ -8,6 +8,8 @@ private open class Optional<T> private constructor() {
 }
 
 public class Promise<T> {
+    private val lock = Object()
+
     private var value: Optional<T> = Optional.None()
     private var handlers: MutableList<(T) -> Unit> = ArrayList()
 
@@ -21,23 +23,27 @@ public class Promise<T> {
 
     private fun resolve(promise: Promise<T>) {
         promise.reserve {
-            if (value is Optional.None) {
-                value = Optional.Some(it)
+            synchronized(lock) {
+                if (value is Optional.None) {
+                    value = Optional.Some(it)
 
-                for (handler in handlers) {
-                    handler(it)
+                    for (handler in handlers) {
+                        handler(it)
+                    }
+                    handlers.clear()
                 }
-                handlers.clear()
             }
         }
     }
 
     private fun reserve(handler: (T) -> Unit) {
-        val v = value
-        if (v is Optional.Some) {
-            handler(v.value)
-        } else {
-            handlers.add(handler)
+        synchronized(lock) {
+            val v = value
+            if (v is Optional.Some) {
+                handler(v.value)
+            } else {
+                handlers.add(handler)
+            }
         }
     }
 
