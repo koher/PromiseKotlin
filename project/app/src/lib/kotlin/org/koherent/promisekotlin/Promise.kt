@@ -62,6 +62,10 @@ public class Promise<T> {
     }
 }
 
+public fun <T> pure(x: T): Promise<T> {
+    return Promise(x)
+}
+
 public fun <T> Promise<Promise<T>>.flatten(): Promise<T> {
     return flatMap { it }
 }
